@@ -1,0 +1,35 @@
+.DS_Store
+
+# IDE settings
+.idea/
+.vscode/
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Build and packaging artifacts
+build/
+dist/
+*.egg-info/
+
+# Local environment files
+.env
+.env.*
+
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Backend local data
+backend/data/
+
+# Assignment files
+WebApp_Dev_Assignment.md
