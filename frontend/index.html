@@ -90,7 +90,6 @@
           </div>
 
           <form class="search-form" id="search-form">
-            <label class="search-label" for="movie-search-input">Movie title</label>
             <div class="search-input-row">
               <input
                 class="search-input"
@@ -157,20 +156,14 @@
         <div class="recommend-grid">
           <article class="recommend-card">
             <div class="recommend-card-topbar">
-              <p class="recommend-card-label">Predicted match</p>
+              <p class="recommend-card-label">Recommendations</p>
               <button class="recommend-button" id="recommend-button" type="button">
                 Generate
               </button>
             </div>
-            <h4 class="recommend-card-title" id="recommend-card-title">
-              Your recommendations will appear here
-            </h4>
             <p class="recommend-card-copy" id="recommend-card-copy">
-              Rate a few movies in the search tab, then generate personalized
-              suggestions based on collaborative filtering.
+              Rate a few movies in Search to generate recommendations.
             </p>
-            <p class="recommend-session-note" id="recommend-summary-value">0 movies rated</p>
-            <div class="recommend-score" id="recommend-score">--</div>
             <div class="recommend-list" id="recommend-list"></div>
           </article>
         </div>
@@ -191,11 +184,6 @@
               Review the titles that power your recommendations, inspect their
               genres, and remove any rating before generating new picks.
             </p>
-          </div>
-
-          <div class="reviews-summary">
-            <p class="reviews-summary-label">Session library</p>
-            <p class="reviews-summary-value" id="reviews-summary-value">0 saved ratings</p>
           </div>
         </div>
 
@@ -329,7 +317,7 @@
             </div>
           </div>
           <div class="modal-summary-block">
-            <p class="modal-summary-label">Ratings count</p>
+            <p class="modal-summary-label">Ratings</p>
             <p class="modal-summary-value" id="movie-details-count">0</p>
           </div>
         </div>

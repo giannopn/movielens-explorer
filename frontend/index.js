@@ -7,9 +7,7 @@ const searchResultsBody = document.getElementById("search-results-body");
 const searchResultsState = document.getElementById("search-results-state");
 const recommendButton = document.getElementById("recommend-button");
 const recommendSummaryValue = document.getElementById("recommend-summary-value");
-const recommendCardTitle = document.getElementById("recommend-card-title");
 const recommendCardCopy = document.getElementById("recommend-card-copy");
-const recommendScore = document.getElementById("recommend-score");
 const recommendList = document.getElementById("recommend-list");
 const reviewsSummaryValue = document.getElementById("reviews-summary-value");
 const reviewsResultsState = document.getElementById("reviews-results-state");
@@ -259,7 +257,7 @@ function renderMovieResults(keyword, movies) {
     .join("");
 
   setResultsState(
-    `${movies.length} result${movies.length === 1 ? "" : "s"} for “${keyword}”.`
+    `${movies.length} result${movies.length === 1 ? "" : "s"} for “${keyword}”`
   );
   updateSearchRowRatings();
 }
@@ -326,10 +324,9 @@ async function submitAddMovieForm() {
       throw new Error(detail);
     }
 
-    const movieId = payload?.movieId;
     addMovieForm.reset();
     setAddMovieStatus(
-      `Movie created successfully${movieId ? ` with ID ${movieId}` : ""}.`,
+      `${normalizedTitle} added successfully.`,
       "success"
     );
   } catch (error) {
@@ -391,6 +388,15 @@ function formatAverageRating(rating) {
   return `<span class="rating-badge-value">${numericRating.toFixed(2)}</span><span class="rating-badge-scale">/ 5.0</span>`;
 }
 
+function formatRecommendationScore(rating) {
+  const numericRating = Number(rating);
+  if (!Number.isFinite(numericRating)) {
+    return "—";
+  }
+
+  return numericRating.toFixed(2);
+}
+
 function updateSearchQueryInUrl(keyword) {
   const url = new URL(window.location.href);
   if (keyword) {
@@ -408,16 +414,24 @@ function updateSearchRowRatings() {
 }
 
 function updateRecommendSummary() {
-  if (!recommendSummaryValue) {
-    return;
+  const count = sessionRatings.size;
+  if (recommendSummaryValue) {
+    recommendSummaryValue.textContent = `${count} movie${count === 1 ? "" : "s"} rated`;
   }
 
-  const count = sessionRatings.size;
-  recommendSummaryValue.textContent = `${count} movie${count === 1 ? "" : "s"} rated`;
+  if (recommendCardCopy) {
+    recommendCardCopy.textContent = count === 0
+      ? "Rate a few movies in Search to generate recommendations."
+      : "Generate recommendations based on the movies you rated.";
+  }
+
+  if (recommendButton) {
+    recommendButton.disabled = count === 0;
+  }
 }
 
 function renderReviews() {
-  if (!reviewsSummaryValue || !reviewsResultsState || !reviewsResultsBody) {
+  if (!reviewsResultsState || !reviewsResultsBody) {
     return;
   }
 
@@ -426,7 +440,9 @@ function renderReviews() {
   );
   const count = ratings.length;
 
-  reviewsSummaryValue.textContent = `${count} saved rating${count === 1 ? "" : "s"}`;
+  if (reviewsSummaryValue) {
+    reviewsSummaryValue.textContent = `${count} saved rating${count === 1 ? "" : "s"}`;
+  }
 
   if (count === 0) {
     reviewsResultsState.textContent = "You have not rated any movies yet.";
@@ -676,7 +692,7 @@ function setAddMovieStatus(message, stateType) {
 }
 
 async function fetchRecommendations() {
-  if (!recommendButton || !recommendCardTitle || !recommendCardCopy || !recommendScore || !recommendList) {
+  if (!recommendButton || !recommendCardCopy || !recommendList) {
     return;
   }
 
@@ -686,20 +702,16 @@ async function fetchRecommendations() {
   }));
 
   if (ratings.length === 0) {
-    recommendCardTitle.textContent = "Rate a few movies first";
     recommendCardCopy.textContent =
-      "Use the Search tab to add session ratings before asking for personalized recommendations.";
-    recommendScore.textContent = "--";
+      "Rate a few movies in Search to generate recommendations.";
     recommendList.innerHTML = "";
     return;
   }
 
   recommendButton.disabled = true;
   recommendButton.textContent = "Loading...";
-  recommendCardTitle.textContent = "Finding matches for your taste";
   recommendCardCopy.textContent =
-    "Comparing your ratings against overlapping MovieLens users and ranking candidate movies.";
-  recommendScore.textContent = "--";
+    "Finding recommendations from your current session ratings...";
   recommendList.innerHTML = "";
 
   try {
@@ -722,9 +734,7 @@ async function fetchRecommendations() {
       : [];
     renderRecommendations(recommendations);
   } catch (error) {
-    recommendCardTitle.textContent = "Recommendations unavailable";
     recommendCardCopy.textContent = getErrorMessage(error);
-    recommendScore.textContent = "--";
     recommendList.innerHTML = "";
   } finally {
     recommendButton.disabled = false;
@@ -733,26 +743,19 @@ async function fetchRecommendations() {
 }
 
 function renderRecommendations(recommendations) {
-  if (!recommendCardTitle || !recommendCardCopy || !recommendScore || !recommendList) {
+  if (!recommendCardCopy || !recommendList) {
     return;
   }
 
   if (recommendations.length === 0) {
-    recommendCardTitle.textContent = "No recommendations yet";
     recommendCardCopy.textContent =
-      "The backend did not return any recommendations for the current ratings set.";
-    recommendScore.textContent = "--";
+      "No recommendations were found for your current ratings.";
     recommendList.innerHTML = "";
     return;
   }
 
-  const [topRecommendation] = recommendations;
-  recommendCardTitle.textContent = topRecommendation.title;
   recommendCardCopy.textContent =
-    topRecommendation.genres && topRecommendation.genres !== "(no genres listed)"
-      ? topRecommendation.genres.split("|").join(" • ")
-      : "No genres listed";
-  recommendScore.textContent = topRecommendation.predictedRating.toFixed(2);
+    "Recommendations based on your current session ratings.";
 
   recommendList.innerHTML = recommendations
     .slice(0, 8)
@@ -768,7 +771,10 @@ function renderRecommendations(recommendations) {
                 : "No genres listed"
             )}</p>
           </div>
-          <p class="recommend-item-score">${formatAverageRating(movie.predictedRating)}</p>
+          <div class="recommend-item-score-block">
+            <p class="recommend-item-score-label">Predicted</p>
+            <p class="recommend-item-score">${formatRecommendationScore(movie.predictedRating)}</p>
+          </div>
         </article>
       `
     )

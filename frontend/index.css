@@ -551,7 +551,6 @@ body {
 }
 
 .recommend-card {
-  min-height: 260px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -600,23 +599,15 @@ body {
 }
 
 .recommend-session-note {
-  margin: -2px 0 0;
+  margin: -2px 0 2px;
   color: #bcaea3;
   font-size: 0.82rem;
-}
-
-.recommend-score {
-  margin-top: auto;
-  color: var(--text);
-  font-size: 2.8rem;
-  font-weight: 700;
-  letter-spacing: -0.06em;
 }
 
 .recommend-list {
   display: grid;
   gap: 12px;
-  margin-top: 18px;
+  margin-top: 8px;
 }
 
 .recommend-item {
@@ -636,13 +627,27 @@ body {
   margin: 0;
 }
 
+.recommend-item-score-label {
+  margin: 0 0 4px;
+  color: #8f8177;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.recommend-item-score-block {
+  text-align: right;
+}
+
 .recommend-item-rank {
   margin: 0;
   color: var(--accent);
   font-size: 0.88rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  min-width: 2.8rem;
+  min-width: 3.4rem;
+  text-align: center;
 }
 
 .recommend-item-title {
@@ -725,7 +730,7 @@ body {
 
 .form-actions {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
@@ -735,13 +740,14 @@ body {
 .form-status {
   margin: 0;
   min-height: 1.35rem;
+  flex: 1 1 260px;
   color: var(--copy);
   font-size: 0.9rem;
   line-height: 1.5;
 }
 
 .form-status.is-success {
-  color: #ffd773;
+  color: #7ddf8a;
 }
 
 .form-status.is-error {
