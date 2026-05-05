@@ -7,6 +7,7 @@ const searchResultsBody = document.getElementById("search-results-body");
 const searchResultsState = document.getElementById("search-results-state");
 const recommendButton = document.getElementById("recommend-button");
 const recommendCardCopy = document.getElementById("recommend-card-copy");
+const recommendResultsLabel = document.getElementById("recommend-results-label");
 const recommendList = document.getElementById("recommend-list");
 const reviewsResultsState = document.getElementById("reviews-results-state");
 const reviewsResultsBody = document.getElementById("reviews-results-body");
@@ -26,6 +27,7 @@ const movieDetailsDistribution = document.getElementById("movie-details-distribu
 
 const STAR_VALUES = [1, 2, 3, 4, 5];
 const sessionRatings = new Map();
+let lastRecommendationInputCount = 0;
 
 function activateTab(targetId) {
   tabs.forEach((tab) => {
@@ -419,6 +421,10 @@ function updateRecommendSummary() {
       : "Generate recommendations based on the movies you rated.";
   }
 
+  if (recommendResultsLabel && count === 0) {
+    recommendResultsLabel.textContent = "No recommendations generated yet";
+  }
+
   if (recommendButton) {
     recommendButton.disabled = count === 0;
   }
@@ -690,10 +696,14 @@ async function fetchRecommendations() {
     movieId,
     rating,
   }));
+  lastRecommendationInputCount = ratings.length;
 
   if (ratings.length === 0) {
     recommendCardCopy.textContent =
       "Rate a few movies in Search to generate recommendations.";
+    if (recommendResultsLabel) {
+      recommendResultsLabel.textContent = "No recommendations generated yet";
+    }
     recommendList.innerHTML = "";
     return;
   }
@@ -702,6 +712,9 @@ async function fetchRecommendations() {
   recommendButton.textContent = "Loading...";
   recommendCardCopy.textContent =
     "Finding recommendations from your current session ratings...";
+  if (recommendResultsLabel) {
+    recommendResultsLabel.textContent = "Generating recommendations...";
+  }
   recommendList.innerHTML = "";
 
   try {
@@ -725,6 +738,9 @@ async function fetchRecommendations() {
     renderRecommendations(recommendations);
   } catch (error) {
     recommendCardCopy.textContent = getErrorMessage(error);
+    if (recommendResultsLabel) {
+      recommendResultsLabel.textContent = "Recommendation request failed";
+    }
     recommendList.innerHTML = "";
   } finally {
     recommendButton.disabled = false;
@@ -740,15 +756,20 @@ function renderRecommendations(recommendations) {
   if (recommendations.length === 0) {
     recommendCardCopy.textContent =
       "No recommendations were found for your current ratings.";
+    if (recommendResultsLabel) {
+      recommendResultsLabel.textContent = "0 recommendations returned";
+    }
     recommendList.innerHTML = "";
     return;
   }
 
   recommendCardCopy.textContent =
     "Recommendations based on your current session ratings.";
+  if (recommendResultsLabel) {
+    recommendResultsLabel.textContent = `Based on ${lastRecommendationInputCount} rated movie${lastRecommendationInputCount === 1 ? "" : "s"}`;
+  }
 
   recommendList.innerHTML = recommendations
-    .slice(0, 8)
     .map(
       (movie, index) => `
         <article class="recommend-item">
