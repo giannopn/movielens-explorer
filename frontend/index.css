@@ -481,38 +481,6 @@ body {
   cursor: pointer;
 }
 
-.reviews-summary {
-  display: grid;
-  gap: 8px;
-  justify-items: start;
-  align-self: center;
-  min-width: 240px;
-  padding: 18px 20px;
-  border: 1px solid rgba(255, 244, 235, 0.08);
-  border-radius: 18px;
-  background: rgba(255, 244, 235, 0.03);
-}
-
-.reviews-summary-label,
-.reviews-summary-value {
-  margin: 0;
-}
-
-.reviews-summary-label {
-  color: #bcaea3;
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.reviews-summary-value {
-  color: var(--text);
-  font-size: 1.2rem;
-  font-weight: 650;
-  letter-spacing: -0.03em;
-}
-
 .recommend-button {
   border: 0;
   border-radius: 14px;
@@ -546,10 +514,6 @@ body {
   max-width: 760px;
 }
 
-.recommend-panel .recommend-summary {
-  justify-self: start;
-}
-
 .recommend-card {
   display: flex;
   flex-direction: column;
@@ -570,7 +534,6 @@ body {
 }
 
 .recommend-card-label,
-.recommend-card-title,
 .recommend-card-copy {
   margin: 0;
 }
@@ -583,25 +546,11 @@ body {
   text-transform: uppercase;
 }
 
-.recommend-card-title {
-  color: var(--text);
-  font-size: clamp(1.2rem, 2vw, 1.85rem);
-  font-weight: 650;
-  letter-spacing: -0.03em;
-  line-height: 1.14;
-}
-
 .recommend-card-copy {
   max-width: 34rem;
   color: var(--copy);
   font-size: 0.98rem;
   line-height: 1.65;
-}
-
-.recommend-session-note {
-  margin: -2px 0 2px;
-  color: #bcaea3;
-  font-size: 0.82rem;
 }
 
 .recommend-list {
@@ -985,12 +934,6 @@ body {
     flex-direction: column;
   }
 
-  .results-card-head {
-    padding: 16px 16px 14px;
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .results-table th,
   .results-table td {
     padding: 14px 16px;
@@ -1005,11 +948,6 @@ body {
     font-size: 0.72rem;
   }
 
-  .reviews-summary {
-    min-width: 0;
-    padding: 16px;
-  }
-
   .recommend-grid {
     grid-template-columns: 1fr;
   }
@@ -1022,10 +960,6 @@ body {
   .recommend-card-topbar {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .recommend-score {
-    font-size: 2.3rem;
   }
 
   .modal-backdrop {

@@ -6,10 +6,8 @@ const searchInput = document.getElementById("movie-search-input");
 const searchResultsBody = document.getElementById("search-results-body");
 const searchResultsState = document.getElementById("search-results-state");
 const recommendButton = document.getElementById("recommend-button");
-const recommendSummaryValue = document.getElementById("recommend-summary-value");
 const recommendCardCopy = document.getElementById("recommend-card-copy");
 const recommendList = document.getElementById("recommend-list");
-const reviewsSummaryValue = document.getElementById("reviews-summary-value");
 const reviewsResultsState = document.getElementById("reviews-results-state");
 const reviewsResultsBody = document.getElementById("reviews-results-body");
 const addMovieForm = document.getElementById("add-movie-form");
@@ -415,10 +413,6 @@ function updateSearchRowRatings() {
 
 function updateRecommendSummary() {
   const count = sessionRatings.size;
-  if (recommendSummaryValue) {
-    recommendSummaryValue.textContent = `${count} movie${count === 1 ? "" : "s"} rated`;
-  }
-
   if (recommendCardCopy) {
     recommendCardCopy.textContent = count === 0
       ? "Rate a few movies in Search to generate recommendations."
@@ -439,10 +433,6 @@ function renderReviews() {
     (left.title || "").localeCompare(right.title || "")
   );
   const count = ratings.length;
-
-  if (reviewsSummaryValue) {
-    reviewsSummaryValue.textContent = `${count} saved rating${count === 1 ? "" : "s"}`;
-  }
 
   if (count === 0) {
     reviewsResultsState.textContent = "You have not rated any movies yet.";
