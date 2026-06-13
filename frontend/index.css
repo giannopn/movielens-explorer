@@ -52,6 +52,9 @@ body {
 }
 
 .api-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin: 0;
   padding: 9px 15px;
   border: 1px solid rgba(255, 244, 235, 0.1);
@@ -60,7 +63,15 @@ body {
   color: #b6a89d;
   font-size: 0.8rem;
   line-height: 1;
+  text-decoration: none;
   white-space: nowrap;
+  transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
+}
+
+.api-pill:hover {
+  border-color: rgba(255, 244, 235, 0.16);
+  background: rgba(255, 244, 235, 0.06);
+  color: var(--text);
 }
 
 .page-shell {
@@ -333,24 +344,10 @@ body {
   font-size: 0.82rem;
 }
 
-.genre-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.genre-pill {
-  display: inline-flex;
-  align-items: center;
-  min-height: 28px;
-  padding: 0 10px;
-  border: 1px solid rgba(255, 244, 235, 0.08);
-  border-radius: 999px;
-  background: rgba(255, 244, 235, 0.035);
+.genre-text {
   color: #d4c5ba;
-  font-size: 0.76rem;
-  font-weight: 500;
-  white-space: nowrap;
+  font-size: 0.82rem;
+  line-height: 1.55;
 }
 
 .rating-badge {
@@ -973,9 +970,8 @@ body {
     font-size: 0.92rem;
   }
 
-  .genre-pill {
-    min-height: 26px;
-    font-size: 0.72rem;
+  .genre-text {
+    font-size: 0.78rem;
   }
 
   .recommend-grid {

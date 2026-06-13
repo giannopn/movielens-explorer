@@ -10,7 +10,9 @@
     <header class="site-header">
       <div class="header-inner">
         <h1 class="app-title">MovieLens <span class="app-title-accent">Explorer</span></h1>
-        <p class="api-pill">API: http://localhost:3000/movielens/api</p>
+        <a class="api-pill" href="http://localhost:3000/docs" target="_blank" rel="noreferrer">
+          API Docs
+        </a>
       </div>
     </header>
 
@@ -21,9 +23,8 @@
           <span class="hero-accent">your taste.</span>
         </h2>
         <p class="hero-copy">
-          Search through 9,000+ titles, contribute new movies, and rate the ones
-          you've seen. The backend uses Pearson-correlation collaborative
-          filtering to predict what you'll love next.
+          Search through 9,000+ titles, add new movies, and rate the ones
+          you've seen. <br /> Then get personalized movie recommendations.
         </p>
         <div class="hero-tabs" role="tablist" aria-label="Primary sections">
           <button
@@ -82,10 +83,10 @@
         <div class="panel-header">
           <div class="panel-copy">
             <p class="panel-kicker">Search</p>
-            <h3 class="panel-title" id="search-panel-title">Find movies in the catalogue</h3>
+            <h3 class="panel-title" id="search-panel-title">Find movies in the catalog</h3>
             <p class="panel-description">
-              Search by title, browse matching films, inspect genres, and prepare
-              ratings for the recommendation engine.
+              Search by title, browse matching movies, inspect genres, view ratings
+              and rating distribution, and rate the films you've seen.
             </p>
           </div>
 
@@ -146,9 +147,9 @@
               Turn your ratings into personalized picks
             </h3>
             <p class="panel-description">
-              Once you've rated a few titles, the system compares your taste with
-              similar MovieLens users and predicts what you are most likely to
-              enjoy next.
+              Once you've rated a few titles, the app compares your
+              ratings with other users and recommends the movies
+              you're most likely to enjoy next.
             </p>
           </div>
         </div>
@@ -184,10 +185,10 @@
         <div class="panel-header">
           <div class="panel-copy">
             <p class="panel-kicker">My Reviews</p>
-            <h3 class="panel-title">Track the movies you rated this session</h3>
+            <h3 class="panel-title">Track the movies you rated</h3>
             <p class="panel-description">
-              Review the titles that power your recommendations, inspect their
-              genres, and remove any rating before generating new picks.
+              View the movies you've rated in this session,
+              and update or remove ratings at any time.
             </p>
           </div>
         </div>
@@ -200,10 +201,10 @@
             <table class="results-table reviews-table">
               <thead>
                 <tr>
-                  <th scope="col">Movie</th>
+                  <th scope="col">Title</th>
                   <th scope="col">Genres</th>
                   <th scope="col">Your Rating</th>
-                  <th scope="col"></th>
+                  <th scope="col">Remove</th>
                 </tr>
               </thead>
               <tbody id="reviews-results-body">
@@ -231,12 +232,7 @@
         <div class="panel-header">
           <div class="panel-copy">
             <p class="panel-kicker">Add Movie</p>
-            <h3 class="panel-title">Add a new title to the catalogue</h3>
-            <p class="panel-description">
-              Submit a movie title and its genres to create a new catalogue entry.
-              Use the MovieLens genre style with the pipe separator, like
-              <span class="inline-code">Action|Drama|Thriller</span>.
-            </p>
+            <h3 class="panel-title">Add a new title to the catalog</h3>
           </div>
         </div>
 
@@ -250,13 +246,13 @@
                   id="add-movie-title"
                   name="title"
                   type="text"
-                  placeholder="Enter the full movie title"
+                  placeholder="Toy Story"
                   required
                 />
               </div>
 
               <div class="form-field form-field-year">
-                <label class="search-label" for="add-movie-year">Year</label>
+                <label class="search-label" for="add-movie-year">Year (Optional)</label>
                 <input
                   class="search-input"
                   id="add-movie-year"
@@ -265,7 +261,7 @@
                   inputmode="numeric"
                   min="1888"
                   max="2100"
-                  placeholder="Optional"
+                  placeholder="1995"
                 />
               </div>
             </div>

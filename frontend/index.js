@@ -362,17 +362,10 @@ function renderStarRating(movie) {
 
 function formatGenres(genres) {
   if (!genres || genres === "(no genres listed)") {
-    return '<span class="genre-pill">No genres listed</span>';
+    return '<span class="genre-text">No genres</span>';
   }
 
-  return `
-    <div class="genre-list">
-      ${genres
-        .split("|")
-        .map((genre) => `<span class="genre-pill">${escapeHtml(genre)}</span>`)
-        .join("")}
-    </div>
-  `;
+  return `<span class="genre-text">${escapeHtml(genres.split("|").join(" • "))}</span>`;
 }
 
 function formatAverageRating(rating) {
@@ -422,7 +415,7 @@ function updateRecommendSummary() {
   }
 
   if (recommendResultsLabel && count === 0) {
-    recommendResultsLabel.textContent = "No recommendations generated yet";
+    recommendResultsLabel.textContent = "";
   }
 
   if (recommendButton) {
@@ -456,7 +449,7 @@ function renderReviews() {
     return;
   }
 
-  reviewsResultsState.textContent = `${count} movie${count === 1 ? "" : "s"} currently influence your recommendations.`;
+  reviewsResultsState.textContent = `${count} rated movie${count === 1 ? "" : "s"} in this session.`;
   reviewsResultsState.classList.remove("is-error", "is-loading");
   reviewsResultsBody.innerHTML = ratings
     .map(
@@ -702,7 +695,7 @@ async function fetchRecommendations() {
     recommendCardCopy.textContent =
       "Rate a few movies in Search to generate recommendations.";
     if (recommendResultsLabel) {
-      recommendResultsLabel.textContent = "No recommendations generated yet";
+      recommendResultsLabel.textContent = "";
     }
     recommendList.innerHTML = "";
     return;
@@ -713,7 +706,7 @@ async function fetchRecommendations() {
   recommendCardCopy.textContent =
     "Finding recommendations from your current session ratings...";
   if (recommendResultsLabel) {
-    recommendResultsLabel.textContent = "Generating recommendations...";
+    recommendResultsLabel.textContent = "";
   }
   recommendList.innerHTML = "";
 
@@ -739,7 +732,7 @@ async function fetchRecommendations() {
   } catch (error) {
     recommendCardCopy.textContent = getErrorMessage(error);
     if (recommendResultsLabel) {
-      recommendResultsLabel.textContent = "Recommendation request failed";
+      recommendResultsLabel.textContent = "";
     }
     recommendList.innerHTML = "";
   } finally {
@@ -757,7 +750,7 @@ function renderRecommendations(recommendations) {
     recommendCardCopy.textContent =
       "No recommendations were found for your current ratings.";
     if (recommendResultsLabel) {
-      recommendResultsLabel.textContent = "0 recommendations returned";
+      recommendResultsLabel.textContent = "";
     }
     recommendList.innerHTML = "";
     return;
