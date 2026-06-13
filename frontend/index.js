@@ -7,6 +7,7 @@ const searchResultsBody = document.getElementById("search-results-body");
 const searchResultsState = document.getElementById("search-results-state");
 const recommendButton = document.getElementById("recommend-button");
 const recommendCardCopy = document.getElementById("recommend-card-copy");
+const recommendResultsHead = document.getElementById("recommend-results-head");
 const recommendResultsLabel = document.getElementById("recommend-results-label");
 const recommendList = document.getElementById("recommend-list");
 const reviewsResultsState = document.getElementById("reviews-results-state");
@@ -414,8 +415,8 @@ function updateRecommendSummary() {
       : "Generate recommendations based on the movies you rated.";
   }
 
-  if (recommendResultsLabel && count === 0) {
-    recommendResultsLabel.textContent = "";
+  if (count === 0) {
+    setRecommendResultsLabel("");
   }
 
   if (recommendButton) {
@@ -694,9 +695,7 @@ async function fetchRecommendations() {
   if (ratings.length === 0) {
     recommendCardCopy.textContent =
       "Rate a few movies in Search to generate recommendations.";
-    if (recommendResultsLabel) {
-      recommendResultsLabel.textContent = "";
-    }
+    setRecommendResultsLabel("");
     recommendList.innerHTML = "";
     return;
   }
@@ -705,9 +704,7 @@ async function fetchRecommendations() {
   recommendButton.textContent = "Loading...";
   recommendCardCopy.textContent =
     "Finding recommendations from your current session ratings...";
-  if (recommendResultsLabel) {
-    recommendResultsLabel.textContent = "";
-  }
+  setRecommendResultsLabel("");
   recommendList.innerHTML = "";
 
   try {
@@ -731,9 +728,7 @@ async function fetchRecommendations() {
     renderRecommendations(recommendations);
   } catch (error) {
     recommendCardCopy.textContent = getErrorMessage(error);
-    if (recommendResultsLabel) {
-      recommendResultsLabel.textContent = "";
-    }
+    setRecommendResultsLabel("");
     recommendList.innerHTML = "";
   } finally {
     recommendButton.disabled = false;
@@ -749,18 +744,16 @@ function renderRecommendations(recommendations) {
   if (recommendations.length === 0) {
     recommendCardCopy.textContent =
       "No recommendations were found for your current ratings.";
-    if (recommendResultsLabel) {
-      recommendResultsLabel.textContent = "";
-    }
+    setRecommendResultsLabel("");
     recommendList.innerHTML = "";
     return;
   }
 
   recommendCardCopy.textContent =
     "Recommendations based on your current session ratings.";
-  if (recommendResultsLabel) {
-    recommendResultsLabel.textContent = `Based on ${lastRecommendationInputCount} rated movie${lastRecommendationInputCount === 1 ? "" : "s"}`;
-  }
+  setRecommendResultsLabel(
+    `Based on ${lastRecommendationInputCount} rated movie${lastRecommendationInputCount === 1 ? "" : "s"}`
+  );
 
   recommendList.innerHTML = recommendations
     .map(
@@ -772,7 +765,7 @@ function renderRecommendations(recommendations) {
             <p class="recommend-item-meta">${escapeHtml(
               movie.genres && movie.genres !== "(no genres listed)"
                 ? movie.genres.split("|").join(" • ")
-                : "No genres listed"
+                : "No genres"
             )}</p>
           </div>
           <div class="recommend-item-score-block">
@@ -790,6 +783,15 @@ function getErrorMessage(error) {
     return error.message;
   }
   return "Unexpected error while loading search results.";
+}
+
+function setRecommendResultsLabel(message) {
+  if (!recommendResultsHead || !recommendResultsLabel) {
+    return;
+  }
+
+  recommendResultsLabel.textContent = message;
+  recommendResultsHead.hidden = !message;
 }
 
 function escapeHtml(value) {

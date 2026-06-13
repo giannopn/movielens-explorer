@@ -647,14 +647,6 @@ body {
   letter-spacing: -0.03em;
 }
 
-.placeholder-card {
-  max-width: 760px;
-  padding: 28px 30px;
-  border: 1px solid rgba(255, 244, 235, 0.08);
-  border-radius: 22px;
-  background: rgba(255, 244, 235, 0.03);
-}
-
 .form-card {
   max-width: 700px;
   margin-top: 24px;
@@ -850,27 +842,28 @@ body {
 
 .distribution-list {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .distribution-row {
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr) 42px;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
 }
 
 .distribution-label,
 .distribution-count {
-  color: var(--muted);
-  font-size: 0.84rem;
+  color: #c7b8ad;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 .distribution-bar-track {
   position: relative;
-  height: 10px;
+  height: 9px;
   border-radius: 999px;
-  background: rgba(255, 244, 235, 0.08);
+  background: rgba(255, 244, 235, 0.06);
   overflow: hidden;
 }
 
@@ -878,7 +871,7 @@ body {
   position: absolute;
   inset: 0 auto 0 0;
   border-radius: inherit;
-  background: linear-gradient(90deg, rgba(255, 191, 47, 0.55), #ffbf2f);
+  background: linear-gradient(90deg, rgba(255, 191, 47, 0.44), #f2b93d);
 }
 
 @media (max-width: 720px) {
