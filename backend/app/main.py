@@ -45,12 +45,12 @@ def search_movies(search: str = Query(..., min_length=1)) -> dict:
     return {"status": "success", "movies": rows_to_dicts(rows)}
 
 
-@app.get(f"{API_PREFIX}/ratings/{{movie_id}}")
-def get_ratings_for_movie(movie_id: int) -> dict:
+@app.get(f"{API_PREFIX}/ratings/{{movieId}}")
+def get_ratings_for_movie(movieId: int) -> dict:
     with closing(_open_connection()) as connection:
         movie_exists = connection.execute(
             "SELECT 1 FROM movies WHERE movieId = ?",
-            (movie_id,),
+            (movieId,),
         ).fetchone()
         if not movie_exists:
             raise HTTPException(status_code=404, detail="Movie not found.")
@@ -62,7 +62,7 @@ def get_ratings_for_movie(movie_id: int) -> dict:
             WHERE movieId = ?
             ORDER BY userId ASC, timestamp ASC
             """,
-            (movie_id,),
+            (movieId,),
         ).fetchall()
 
     return {"status": "success", "ratings": rows_to_dicts(rows)}
