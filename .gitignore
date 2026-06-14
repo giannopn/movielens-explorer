@@ -28,8 +28,11 @@ dist/
 *.sqlite
 *.sqlite3
 
-# Backend local data
-backend/data/
+# Backend local data payloads
+backend/data/*
+!backend/data/ml-latest-small/
+backend/data/ml-latest-small/*
+!backend/data/ml-latest-small/README.md
 
 # Assignment files
 WebApp_Dev_Assignment.md
