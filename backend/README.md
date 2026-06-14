@@ -66,4 +66,4 @@ http://localhost:3000/movielens/api
 - CORS is enabled for all origins.
 - New movies are assigned `MAX(movieId) + 1`.
 - Recommendation requests do not persist ratings to the database.
-- The recommender uses Pearson similarity with top-K neighbors and falls back to highly rated popular movies when there is not enough overlap to produce collaborative results.
+- The recommender uses Pearson similarity with top-K neighbors and returns an empty list when there is not enough overlap to produce collaborative results.

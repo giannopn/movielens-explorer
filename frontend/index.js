@@ -5,7 +5,6 @@ const searchForm = document.getElementById("search-form");
 const searchInput = document.getElementById("movie-search-input");
 const searchResultsBody = document.getElementById("search-results-body");
 const searchResultsState = document.getElementById("search-results-state");
-const recommendButton = document.getElementById("recommend-button");
 const recommendCardCopy = document.getElementById("recommend-card-copy");
 const recommendResultsHead = document.getElementById("recommend-results-head");
 const recommendResultsLabel = document.getElementById("recommend-results-label");
@@ -40,6 +39,10 @@ function activateTab(targetId) {
   panels.forEach((panel) => {
     panel.hidden = panel.id !== targetId;
   });
+
+  if (targetId === "recommend-panel") {
+    void fetchRecommendations();
+  }
 }
 
 tabs.forEach((tab) => {
@@ -143,12 +146,6 @@ if (reviewsResultsBody) {
     updateSearchRowRatings();
     updateRecommendSummary();
     renderReviews();
-  });
-}
-
-if (recommendButton) {
-  recommendButton.addEventListener("click", async () => {
-    await fetchRecommendations();
   });
 }
 
@@ -411,16 +408,12 @@ function updateRecommendSummary() {
   const count = sessionRatings.size;
   if (recommendCardCopy) {
     recommendCardCopy.textContent = count === 0
-      ? "Rate a few movies in Search to generate recommendations."
+      ? "Rate a few movies in Search to get recommendations."
       : "Generate recommendations based on the movies you rated.";
   }
 
   if (count === 0) {
     setRecommendResultsLabel("");
-  }
-
-  if (recommendButton) {
-    recommendButton.disabled = count === 0;
   }
 }
 
@@ -682,7 +675,7 @@ function setAddMovieStatus(message, stateType) {
 }
 
 async function fetchRecommendations() {
-  if (!recommendButton || !recommendCardCopy || !recommendList) {
+  if (!recommendCardCopy || !recommendList) {
     return;
   }
 
@@ -694,14 +687,12 @@ async function fetchRecommendations() {
 
   if (ratings.length === 0) {
     recommendCardCopy.textContent =
-      "Rate a few movies in Search to generate recommendations.";
+      "Rate a few movies in Search to get recommendations.";
     setRecommendResultsLabel("");
     recommendList.innerHTML = "";
     return;
   }
 
-  recommendButton.disabled = true;
-  recommendButton.textContent = "Loading...";
   recommendCardCopy.textContent =
     "Finding recommendations from your current session ratings...";
   setRecommendResultsLabel("");
@@ -730,9 +721,6 @@ async function fetchRecommendations() {
     recommendCardCopy.textContent = getErrorMessage(error);
     setRecommendResultsLabel("");
     recommendList.innerHTML = "";
-  } finally {
-    recommendButton.disabled = false;
-    recommendButton.textContent = "Generate";
   }
 }
 
@@ -743,7 +731,7 @@ function renderRecommendations(recommendations) {
 
   if (recommendations.length === 0) {
     recommendCardCopy.textContent =
-      "No recommendations were found for your current ratings.";
+      "Rate more movies to get recommendations.";
     setRecommendResultsLabel("");
     recommendList.innerHTML = "";
     return;
@@ -751,12 +739,9 @@ function renderRecommendations(recommendations) {
 
   recommendCardCopy.textContent =
     "Recommendations based on your current session ratings.";
-  const recommendationBasis =
-    `Based on ${lastRecommendationInputCount} rated movie${lastRecommendationInputCount === 1 ? "" : "s"}`;
-  const recommendationNote = lastRecommendationInputCount <= 8
-    ? `${recommendationBasis}\nResults may be less personalized. Rate more movies for better recommendations.`
-    : recommendationBasis;
-  setRecommendResultsLabel(recommendationNote);
+  setRecommendResultsLabel(
+    `Based on ${lastRecommendationInputCount} rated movie${lastRecommendationInputCount === 1 ? "" : "s"}`
+  );
 
   recommendList.innerHTML = recommendations
     .map(

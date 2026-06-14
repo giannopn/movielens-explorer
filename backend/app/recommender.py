@@ -7,7 +7,6 @@ from collections.abc import Iterable
 
 DEFAULT_TOP_K = 20
 DEFAULT_TOP_N = 10
-FALLBACK_MIN_RATINGS = 25
 
 
 def pearson_similarity(
@@ -71,14 +70,14 @@ def get_recommendations(
 
     neighbors = find_top_neighbors(connection, active_ratings, top_k=top_k)
     if not neighbors:
-        return get_fallback_recommendations(connection, set(active_ratings), top_n=top_n)
+        return []
 
     neighbor_ratings = _fetch_ratings_for_users(
         connection, [user_id for user_id, _ in neighbors]
     )
     predictions = predict_ratings(active_ratings, neighbors, neighbor_ratings)
     if not predictions:
-        return get_fallback_recommendations(connection, set(active_ratings), top_n=top_n)
+        return []
 
     top_predictions = sorted(predictions.items(), key=lambda item: (-item[1], item[0]))[:top_n]
     movie_lookup = _fetch_movies(connection, [movie_id for movie_id, _ in top_predictions])
@@ -130,50 +129,6 @@ def predict_ratings(
         predictions[movie_id] = max(0.5, min(5.0, prediction))
 
     return predictions
-
-
-def get_fallback_recommendations(
-    connection: sqlite3.Connection,
-    excluded_movie_ids: set[int],
-    top_n: int = DEFAULT_TOP_N,
-    min_ratings: int = FALLBACK_MIN_RATINGS,
-) -> list[dict]:
-    excluded_clause = ""
-    parameters: list[int] = []
-
-    if excluded_movie_ids:
-        placeholders = ",".join("?" for _ in excluded_movie_ids)
-        excluded_clause = f"WHERE m.movieId NOT IN ({placeholders})"
-        parameters.extend(sorted(excluded_movie_ids))
-
-    query = f"""
-        SELECT
-            m.movieId,
-            m.title,
-            m.genres,
-            ROUND(AVG(r.rating), 2) AS predictedRating
-        FROM movies AS m
-        JOIN ratings AS r ON r.movieId = m.movieId
-        {excluded_clause}
-        GROUP BY m.movieId, m.title, m.genres
-        HAVING COUNT(r.rating) >= ?
-        ORDER BY AVG(r.rating) DESC, COUNT(r.rating) DESC, m.title COLLATE NOCASE ASC
-        LIMIT ?
-    """
-    parameters.extend([min_ratings, top_n])
-
-    rows = connection.execute(query, parameters).fetchall()
-    return [
-        {
-            "movieId": row["movieId"],
-            "title": row["title"],
-            "genres": row["genres"],
-            "predictedRating": row["predictedRating"],
-        }
-        for row in rows
-    ]
-
-
 def _fetch_overlap_ratings(
     connection: sqlite3.Connection, movie_ids: Iterable[int]
 ) -> dict[int, dict[int, float]]:
