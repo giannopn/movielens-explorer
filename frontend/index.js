@@ -26,7 +26,8 @@ const movieDetailsCount = document.getElementById("movie-details-count");
 const movieDetailsDistribution = document.getElementById("movie-details-distribution");
 
 const STAR_VALUES = [1, 2, 3, 4, 5];
-const sessionRatings = new Map();
+const SESSION_RATINGS_STORAGE_KEY = "movielens.sessionRatings";
+const sessionRatings = loadSessionRatings();
 let lastRecommendationInputCount = 0;
 
 function activateTab(targetId) {
@@ -85,9 +86,9 @@ if (searchResultsBody) {
 
     const currentRating = sessionRatings.get(movieId)?.rating ?? 0;
     if (currentRating === rating) {
-      sessionRatings.delete(movieId);
+      removeSessionRating(movieId);
     } else {
-      sessionRatings.set(movieId, { movieId, rating, title, genres });
+      upsertSessionRating({ movieId, rating, title, genres });
     }
 
     triggerStarClickAnimation(group, rating);
@@ -120,9 +121,9 @@ if (reviewsResultsBody) {
 
       const currentRating = sessionRatings.get(movieId)?.rating ?? 0;
       if (currentRating === rating) {
-        sessionRatings.delete(movieId);
+        removeSessionRating(movieId);
       } else {
-        sessionRatings.set(movieId, { movieId, rating, title, genres });
+        upsertSessionRating({ movieId, rating, title, genres });
       }
 
       triggerStarClickAnimation(group, rating);
@@ -142,7 +143,7 @@ if (reviewsResultsBody) {
       return;
     }
 
-    sessionRatings.delete(movieId);
+    removeSessionRating(movieId);
     updateSearchRowRatings();
     updateRecommendSummary();
     renderReviews();
@@ -377,6 +378,71 @@ function formatAverageRating(rating) {
   }
 
   return `<span class="rating-badge-value">${numericRating.toFixed(2)}</span><span class="rating-badge-scale">/ 5.0</span>`;
+}
+
+function loadSessionRatings() {
+  if (typeof window === "undefined" || !window.sessionStorage) {
+    return new Map();
+  }
+
+  try {
+    const rawValue = window.sessionStorage.getItem(SESSION_RATINGS_STORAGE_KEY);
+    if (!rawValue) {
+      return new Map();
+    }
+
+    const parsed = JSON.parse(rawValue);
+    if (!Array.isArray(parsed)) {
+      window.sessionStorage.removeItem(SESSION_RATINGS_STORAGE_KEY);
+      return new Map();
+    }
+
+    const entries = parsed
+      .map(normalizeStoredRating)
+      .filter((rating) => rating !== null)
+      .map((rating) => [rating.movieId, rating]);
+
+    return new Map(entries);
+  } catch {
+    window.sessionStorage.removeItem(SESSION_RATINGS_STORAGE_KEY);
+    return new Map();
+  }
+}
+
+function normalizeStoredRating(value) {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const movieId = Number(value.movieId);
+  const rating = Number(value.rating);
+  const title = typeof value.title === "string" ? value.title : "";
+  const genres = typeof value.genres === "string" ? value.genres : "";
+
+  if (!Number.isFinite(movieId) || !Number.isFinite(rating)) {
+    return null;
+  }
+
+  return { movieId, rating, title, genres };
+}
+
+function persistSessionRatings() {
+  if (typeof window === "undefined" || !window.sessionStorage) {
+    return;
+  }
+
+  const serializedRatings = JSON.stringify(Array.from(sessionRatings.values()));
+  window.sessionStorage.setItem(SESSION_RATINGS_STORAGE_KEY, serializedRatings);
+}
+
+function upsertSessionRating(rating) {
+  sessionRatings.set(rating.movieId, rating);
+  persistSessionRatings();
+}
+
+function removeSessionRating(movieId) {
+  sessionRatings.delete(movieId);
+  persistSessionRatings();
 }
 
 function formatRecommendationScore(rating) {
