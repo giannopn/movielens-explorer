@@ -29,6 +29,8 @@ const STAR_VALUES = [1, 2, 3, 4, 5];
 const SESSION_RATINGS_STORAGE_KEY = "movielens.sessionRatings";
 const sessionRatings = loadSessionRatings();
 let lastRecommendationInputCount = 0;
+let lastRecommendationKey = "";
+let lastRecommendationResults = [];
 
 function activateTab(targetId) {
   tabs.forEach((tab) => {
@@ -42,7 +44,7 @@ function activateTab(targetId) {
   });
 
   if (targetId === "recommend-panel") {
-    void fetchRecommendations();
+    void refreshRecommendationsIfNeeded();
   }
 }
 
@@ -178,11 +180,7 @@ if (searchForm && searchInput && searchResultsBody && searchResultsState) {
     updateSearchQueryInUrl(keyword);
 
     if (!keyword) {
-      renderSearchPlaceholder(
-        "No results yet",
-        "Start with a title search above",
-        "Search for a movie title to load results."
-      );
+      renderSearchPlaceholder("No results yet", "Search for a movie title to load results.");
       return;
     }
 
@@ -218,7 +216,6 @@ async function runMovieSearch(keyword) {
   } catch (error) {
     renderSearchPlaceholder(
       "Search unavailable",
-      "The frontend could not load movies from the backend.",
       getErrorMessage(error),
       "error"
     );
@@ -227,11 +224,7 @@ async function runMovieSearch(keyword) {
 
 function renderMovieResults(keyword, movies) {
   if (movies.length === 0) {
-    renderSearchPlaceholder(
-      "No matches found",
-      `No movie titles matched “${keyword}”.`,
-      "Try a broader keyword or a shorter title fragment."
-    );
+    renderSearchPlaceholder("No results found", "Try a broader keyword or a shorter title fragment.");
     return;
   }
 
@@ -261,13 +254,12 @@ function renderMovieResults(keyword, movies) {
   updateSearchRowRatings();
 }
 
-function renderSearchPlaceholder(title, meta, stateMessage, stateType = "") {
+function renderSearchPlaceholder(title, stateMessage, stateType = "") {
   searchResultsBody.innerHTML = `
     <tr>
       <td class="cell-title" colspan="4">
         <div class="movie-cell">
           <span class="movie-name">${escapeHtml(title)}</span>
-          <span class="movie-meta">${escapeHtml(meta)}</span>
         </div>
       </td>
     </tr>
@@ -454,6 +446,14 @@ function formatRecommendationScore(rating) {
   return numericRating.toFixed(2);
 }
 
+function getRecommendationKey() {
+  return JSON.stringify(
+    Array.from(sessionRatings.values())
+      .map(({ movieId, rating }) => ({ movieId, rating }))
+      .sort((left, right) => left.movieId - right.movieId)
+  );
+}
+
 function updateSearchQueryInUrl(keyword) {
   const url = new URL(window.location.href);
   if (keyword) {
@@ -500,8 +500,7 @@ function renderReviews() {
       <tr>
         <td class="cell-title" colspan="4">
           <div class="movie-cell">
-            <span class="movie-name">No saved ratings</span>
-            <span class="movie-meta">Rate movies from the Search tab to build your session list.</span>
+            <span class="movie-name">No rated movies yet</span>
           </div>
         </td>
       </tr>
@@ -782,12 +781,38 @@ async function fetchRecommendations() {
     const recommendations = Array.isArray(payload?.recommendations)
       ? payload.recommendations
       : [];
+    lastRecommendationKey = getRecommendationKey();
+    lastRecommendationResults = recommendations;
     renderRecommendations(recommendations);
   } catch (error) {
     recommendCardCopy.textContent = getErrorMessage(error);
     setRecommendResultsLabel("");
     recommendList.innerHTML = "";
   }
+}
+
+async function refreshRecommendationsIfNeeded() {
+  if (!recommendCardCopy || !recommendList) {
+    return;
+  }
+
+  const currentRecommendationKey = getRecommendationKey();
+  if (sessionRatings.size === 0) {
+    lastRecommendationKey = "";
+    lastRecommendationResults = [];
+    recommendCardCopy.textContent =
+      "Rate a few movies in Search to get recommendations.";
+    setRecommendResultsLabel("");
+    recommendList.innerHTML = "";
+    return;
+  }
+
+  if (currentRecommendationKey === lastRecommendationKey) {
+    renderRecommendations(lastRecommendationResults);
+    return;
+  }
+
+  await fetchRecommendations();
 }
 
 function renderRecommendations(recommendations) {
