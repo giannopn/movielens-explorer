@@ -751,9 +751,12 @@ function renderRecommendations(recommendations) {
 
   recommendCardCopy.textContent =
     "Recommendations based on your current session ratings.";
-  setRecommendResultsLabel(
-    `Based on ${lastRecommendationInputCount} rated movie${lastRecommendationInputCount === 1 ? "" : "s"}`
-  );
+  const recommendationBasis =
+    `Based on ${lastRecommendationInputCount} rated movie${lastRecommendationInputCount === 1 ? "" : "s"}`;
+  const recommendationNote = lastRecommendationInputCount <= 8
+    ? `${recommendationBasis}\nResults may be less personalized. Rate more movies for better recommendations.`
+    : recommendationBasis;
+  setRecommendResultsLabel(recommendationNote);
 
   recommendList.innerHTML = recommendations
     .map(

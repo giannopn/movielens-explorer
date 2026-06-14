@@ -570,6 +570,7 @@ body {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  white-space: pre-line;
 }
 
 .recommend-list {
