@@ -396,10 +396,6 @@ body {
   transform: translateY(-1px) scale(1.08);
 }
 
-.star-slot.is-clicked {
-  animation: star-pop 220ms ease;
-}
-
 .star-base,
 .star-fill {
   position: absolute;

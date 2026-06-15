@@ -93,7 +93,6 @@ if (searchResultsBody) {
       upsertSessionRating({ movieId, rating, title, genres });
     }
 
-    triggerStarClickAnimation(group, rating);
     updateSearchRowRatings();
     updateRecommendSummary();
     renderReviews();
@@ -128,7 +127,6 @@ if (reviewsResultsBody) {
         upsertSessionRating({ movieId, rating, title, genres });
       }
 
-      triggerStarClickAnimation(group, rating);
       updateSearchRowRatings();
       updateRecommendSummary();
       renderReviews();
@@ -587,24 +585,6 @@ function updateStarGroupState(group) {
   if (valueLabel) {
     valueLabel.textContent = formatDisplayedRating(hoverRating > 0 ? hoverRating : currentRating);
   }
-}
-
-function triggerStarClickAnimation(group, clickedRating) {
-  const slots = Array.from(group.querySelectorAll(".star-slot"));
-
-  slots.forEach((slot, index) => {
-    const starIndex = index + 1;
-    if (getStarFillPercentage(clickedRating, starIndex) === 0) {
-      return;
-    }
-
-    slot.classList.remove("is-clicked");
-    void slot.offsetWidth;
-    slot.classList.add("is-clicked");
-    window.setTimeout(() => {
-      slot.classList.remove("is-clicked");
-    }, 240);
-  });
 }
 
 function getStarFillPercentage(rating, starIndex) {
