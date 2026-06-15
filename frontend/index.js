@@ -881,9 +881,3 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
 }
-
-window.MOVIELENS_APP = {
-  apiBaseUrl: API_BASE_URL,
-  activateTab,
-  runMovieSearch,
-};
