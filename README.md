@@ -5,9 +5,7 @@
 - Python 3.11 or newer
 - MovieLens Latest Small dataset files
 
-Download the MovieLens Latest Small dataset from:
-
-- https://files.grouplens.org/datasets/movielens/ml-latest-small.zip
+Download the MovieLens Latest Small dataset from [here](https://files.grouplens.org/datasets/movielens/ml-latest-small.zip).
 
 Extract the CSV files into:
 
