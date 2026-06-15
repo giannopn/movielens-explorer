@@ -1,4 +1,4 @@
-# Backend
+# MovieLens Explorer
 
 ## Requirements
 

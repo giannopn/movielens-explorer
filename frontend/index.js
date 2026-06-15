@@ -473,7 +473,7 @@ function updateRecommendSummary() {
   if (recommendCardCopy) {
     recommendCardCopy.textContent = count === 0
       ? "Rate a few movies in Search to get recommendations."
-      : "Generate recommendations based on the movies you rated.";
+      : "Recommendations will appear here based on your ratings.";
   }
 
   if (count === 0) {
