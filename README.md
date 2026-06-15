@@ -1,5 +1,7 @@
 # MovieLens Explorer
 
+A web application for exploring the MovieLens movie catalog, adding new movies, and getting personalized recommendations based on your ratings.
+
 ## Requirements
 
 - Python 3.11 or newer
