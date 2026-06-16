@@ -38,6 +38,19 @@
           >
             <span>Search</span>
           </button>
+          <!-- ---------- -->
+          <button
+            class="hero-tab"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="tags-panel"
+            id="tab-tags"
+            data-tab-target="tags-panel"
+          >
+            <span>Tags</span>
+          </button>
+          <!-- ---------- -->
           <button
             class="hero-tab"
             type="button"
@@ -131,6 +144,63 @@
           </div>
         </div>
       </section>
+
+      <!-- ---------- -->
+      <section
+        class="workspace-panel"
+        id="tags-panel"
+        role="tabpanel"
+        aria-labelledby="tab-tags"
+        hidden
+      >
+        <div class="panel-header">
+          <div class="panel-copy">
+            <p class="panel-kicker">Tag Search</p>
+            <h3 class="panel-title">Find movies by tag</h3>
+          </div>
+
+          <form class="search-form" id="tag-search-form">
+            <div class="search-input-row">
+              <input
+                class="search-input"
+                id="tag-search-input"
+                name="tag-search"
+                type="search"
+                placeholder="Search for a tag"
+              />
+              <button class="search-button" type="submit">Search</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="results-card">
+          <div class="results-state" id="tag-results-state" aria-live="polite">
+            Search for a tag to load results.
+          </div>
+          <div class="results-table-wrap">
+            <table class="results-table">
+              <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Genres</th>
+                  <th scope="col">Matching Tag</th>
+                  <th scope="col">Rate</th>
+                </tr>
+              </thead>
+              <tbody id="tag-results-body">
+                <tr>
+                  <td class="cell-title" colspan="4">
+                    <div class="movie-cell">
+                      <span class="movie-name">No results yet</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <!-- ---------- -->
 
       <section
         class="workspace-panel recommend-panel"

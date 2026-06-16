@@ -3,10 +3,7 @@ version = 1
 name = "movielens-explorer"
 
 [setup]
-script = '''
-make install
-make init-db
-'''
+script = ""
 
 [[actions]]
 name = "Run API"

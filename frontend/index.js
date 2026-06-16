@@ -5,6 +5,12 @@ const searchForm = document.getElementById("search-form");
 const searchInput = document.getElementById("movie-search-input");
 const searchResultsBody = document.getElementById("search-results-body");
 const searchResultsState = document.getElementById("search-results-state");
+// ----------
+const tagSearchForm = document.getElementById("tag-search-form");
+const tagSearchInput = document.getElementById("tag-search-input");
+const tagResultsBody = document.getElementById("tag-results-body");
+const tagResultsState = document.getElementById("tag-results-state");
+// ----------
 const recommendCardCopy = document.getElementById("recommend-card-copy");
 const recommendResultsHead = document.getElementById("recommend-results-head");
 const recommendResultsLabel = document.getElementById("recommend-results-label");
@@ -54,11 +60,19 @@ tabs.forEach((tab) => {
   });
 });
 
-if (searchResultsBody) {
-  searchResultsBody.addEventListener("mouseover", handleStarHoverStart);
-  searchResultsBody.addEventListener("mouseout", handleStarHoverEnd);
+// ----------
+attachMovieResultsInteractions(searchResultsBody);
+attachMovieResultsInteractions(tagResultsBody);
 
-  searchResultsBody.addEventListener("click", (event) => {
+function attachMovieResultsInteractions(resultsBody) {
+  if (!resultsBody) {
+    return;
+  }
+
+  resultsBody.addEventListener("mouseover", handleStarHoverStart);
+  resultsBody.addEventListener("mouseout", handleStarHoverEnd);
+
+  resultsBody.addEventListener("click", (event) => {
     const starHit = event.target.closest(".star-hit");
     if (!starHit) {
       const row = event.target.closest("[data-movie-row]");
@@ -98,6 +112,7 @@ if (searchResultsBody) {
     renderReviews();
   });
 }
+// ----------
 
 if (reviewsResultsBody) {
   reviewsResultsBody.addEventListener("mouseover", handleStarHoverStart);
@@ -192,6 +207,22 @@ if (searchForm && searchInput && searchResultsBody && searchResultsState) {
   }
 }
 
+// ----------
+if (tagSearchForm && tagSearchInput && tagResultsBody && tagResultsState) {
+  tagSearchForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const keyword = tagSearchInput.value.trim();
+
+    if (!keyword) {
+      renderTagSearchPlaceholder("No results yet", "Search for a tag to load results.");
+      return;
+    }
+
+    await runTagSearch(keyword);
+  });
+}
+// ----------
+
 updateRecommendSummary();
 renderReviews();
 
@@ -251,6 +282,79 @@ function renderMovieResults(keyword, movies) {
   );
   updateSearchRowRatings();
 }
+
+// ----------
+async function runTagSearch(keyword) {
+  setTagResultsState(`Searching tags for “${keyword}”…`, "loading");
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/tags/movies`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ search: keyword }),
+    });
+    const payload = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const detail = payload?.detail || "The tag search request failed.";
+      throw new Error(detail);
+    }
+
+    const movies = Array.isArray(payload?.movies) ? payload.movies : [];
+    renderTagMovieResults(keyword, movies);
+  } catch (error) {
+    renderTagSearchPlaceholder("Search unavailable", getErrorMessage(error), "error");
+  }
+}
+
+function renderTagMovieResults(keyword, movies) {
+  if (movies.length === 0) {
+    renderTagSearchPlaceholder("No results found", "Try another tag.");
+    return;
+  }
+
+  tagResultsBody.innerHTML = movies
+    .map((movie) => `
+      <tr class="is-clickable" data-movie-row data-movie-id="${movie.movieId}" data-title="${escapeHtml(movie.title)}" data-genres="${escapeHtml(movie.genres || "")}">
+        <td class="cell-title">
+          <div class="movie-cell">
+            <span class="movie-name">${escapeHtml(movie.title)}</span>
+          </div>
+        </td>
+        <td>${formatGenres(movie.genres)}</td>
+        <td><span class="genre-text">${escapeHtml(movie.matchingTag || "—")}</span></td>
+        <td>${renderStarRating(movie)}</td>
+      </tr>
+    `)
+    .join("");
+
+  setTagResultsState(
+    `${movies.length} result${movies.length === 1 ? "" : "s"} for “${keyword}”`
+  );
+  updateSearchRowRatings();
+}
+
+function renderTagSearchPlaceholder(title, stateMessage, stateType = "") {
+  tagResultsBody.innerHTML = `
+    <tr>
+      <td class="cell-title" colspan="4">
+        <div class="movie-cell">
+          <span class="movie-name">${escapeHtml(title)}</span>
+        </div>
+      </td>
+    </tr>
+  `;
+  setTagResultsState(stateMessage, stateType);
+}
+
+function setTagResultsState(message, stateType = "") {
+  tagResultsState.textContent = message;
+  tagResultsState.classList.toggle("is-loading", stateType === "loading");
+  tagResultsState.classList.toggle("is-error", stateType === "error");
+}
+// ----------
 
 function renderSearchPlaceholder(title, stateMessage, stateType = "") {
   searchResultsBody.innerHTML = `
@@ -463,7 +567,10 @@ function updateSearchQueryInUrl(keyword) {
 }
 
 function updateSearchRowRatings() {
-  const starGroups = searchResultsBody.querySelectorAll(".star-rating");
+  const starGroups = [
+    ...(searchResultsBody ? Array.from(searchResultsBody.querySelectorAll(".star-rating")) : []),
+    ...(tagResultsBody ? Array.from(tagResultsBody.querySelectorAll(".star-rating")) : []),
+  ];
 
   starGroups.forEach(updateStarGroupState);
 }
@@ -841,7 +948,7 @@ function getErrorMessage(error) {
   if (error instanceof Error && error.message) {
     return error.message;
   }
-  return "Unexpected error while loading search results.";
+  return "Unexpected request error.";
 }
 
 function setRecommendResultsLabel(message) {
