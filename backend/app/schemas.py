@@ -15,3 +15,9 @@ class RatingInput(BaseModel):
 
 class RecommendationRequest(BaseModel):
     ratings: list[RatingInput] = Field(..., min_length=1)
+
+
+# ----------
+class TagSearchRequest(BaseModel):
+    search: str = Field(..., min_length=1)
+# ----------

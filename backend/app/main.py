@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .database import get_connection, rows_to_dicts
 from .recommender import get_recommendations
-from .schemas import MovieCreate, RatingInput, RecommendationRequest
+from .schemas import MovieCreate, RatingInput, RecommendationRequest, TagSearchRequest
 
 API_PREFIX = "/movielens/api"
 
@@ -43,6 +43,41 @@ def search_movies(search: str = Query(..., min_length=1)) -> dict:
         rows = connection.execute(query, (f"%{keyword.lower()}%",)).fetchall()
 
     return {"status": "success", "movies": rows_to_dicts(rows)}
+
+
+# ----------
+@app.post(f"{API_PREFIX}/tags/movies")
+def search_movies_by_tag(payload: TagSearchRequest) -> dict:
+    keyword = payload.search.strip()
+    if not keyword:
+        raise HTTPException(status_code=400, detail="Search keyword cannot be blank.")
+
+    normalized_keyword = keyword.lower()
+    if len(keyword) < 5:
+        where_clause = "LOWER(t.tag) = ?"
+        query_params = (normalized_keyword,)
+    else:
+        where_clause = "SUBSTR(LOWER(t.tag), 1, 5) = ?"
+        query_params = (normalized_keyword[:5],)
+
+    query = f"""
+        SELECT
+            m.movieId,
+            m.title,
+            m.genres,
+            MIN(t.tag) AS matchingTag
+        FROM tags AS t
+        INNER JOIN movies AS m ON m.movieId = t.movieId
+        WHERE {where_clause}
+        GROUP BY m.movieId, m.title, m.genres
+        ORDER BY m.title COLLATE NOCASE ASC
+    """
+
+    with closing(_open_connection()) as connection:
+        rows = connection.execute(query, query_params).fetchall()
+
+    return {"status": "success", "movies": rows_to_dicts(rows)}
+# ----------
 
 
 @app.get(f"{API_PREFIX}/ratings/{{movieId}}")
