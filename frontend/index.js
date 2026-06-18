@@ -226,6 +226,9 @@ if (tagSearchForm && tagSearchInput && tagResultsBody && tagResultsState) {
 
 updateRecommendSummary();
 renderReviews();
+// ----------
+void fetch(`${API_BASE_URL}/movies?search=health-check`).catch(() => {});
+// ----------
 
 async function runMovieSearch(keyword) {
   setResultsState(`Searching for “${keyword}”…`, "loading");
