@@ -31,7 +31,7 @@ dist/
 # Backend local data payloads
 backend/data/*
 !backend/data/ml-latest-small/
-backend/data/ml-latest-small/*
+!backend/data/ml-latest-small/*
 !backend/data/ml-latest-small/README.md
 
 # Assignment files
