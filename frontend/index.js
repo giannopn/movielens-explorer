@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://localhost:3000/movielens/api";
+const API_BASE_URL = "https://movielens-explorer-api.onrender.com/movielens/api";
+// const API_BASE_URL = "http://localhost:3000/movielens/api";
 const tabs = Array.from(document.querySelectorAll("[data-tab-target]"));
 const panels = Array.from(document.querySelectorAll('[role="tabpanel"]'));
 const searchForm = document.getElementById("search-form");
