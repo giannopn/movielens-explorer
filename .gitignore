@@ -34,6 +34,3 @@ backend/data/*
 !backend/data/ml-latest-small/*
 !backend/data/ml-latest-small/README.md
 
-# Assignment files
-WebApp_Dev_Assignment.md
-/WebApp_Dev_Extension.md
