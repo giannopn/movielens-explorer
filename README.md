@@ -4,7 +4,7 @@ A movie discovery web application for exploring the MovieLens catalog, searching
 
 [Live Demo](https://movielens-explorer.onrender.com/) · [API Docs](https://movielens-explorer-api.onrender.com/docs)
 
-<!-- Replace this comment with the screenshot uploaded through GitHub's Markdown editor. Suggested alt text: MovieLens Explorer showing search results and star ratings. -->
+<img width="1645" height="1008" alt="SCR-20260926-nmcz" src="https://github.com/user-attachments/assets/656f8069-88f3-43e5-9a44-1878a26d3f13" />
 
 ## Features
 
